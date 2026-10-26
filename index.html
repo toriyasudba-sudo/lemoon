@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LeMoon 8/9 — Онлайн-каталог (−70%)</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e1;
+  --ink: #3b3b39;
+  --mute: #8a8780;
+  --line: #9a968d;
+  --sale: #a8322d;
+  --card: #faf6ea;
+  --serif: 'Merriweather', Georgia, serif;
+  --logo: 'Bodoni Moda', 'Times New Roman', serif;
+}
+* { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 14px/1.6 var(--serif);
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 10px calc(95px + env(safe-area-inset-bottom, 0px));
+}
+.frame {
+  border: 2px dotted var(--line);
+  padding: 16px 12px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.cap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--mute);
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+.cap::before, .cap::after {
+  content: "";
+  flex: 1;
+  border-top: 3px dotted var(--line);
+}
+.cap.foot { margin-top: 32px; }
+
+/* Начальный экран и фирменный логотип */
+.hero {
+  text-align: center;
+  padding: 18px 8px 16px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.brand-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto 6px;
+  padding-top: 36px;
+}
+.arc-svg {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-62%);
+  width: 175px;
+  height: 95px;
+  pointer-events: none;
+  overflow: visible;
+}
+.brand-title {
+  font: 400 54px/1 var(--logo);
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.62em;
+  line-height: 0.95;
+  vertical-align: middle;
+  transform: translateY(-2px);
+}
+.frac b { font-weight: 400; }
+.frac i {
+  display: block;
+  width: 34px;
+  border-top: 1.5px solid var(--ink);
+  margin: 3px 0;
+}
+.tagline {
+  font-size: 15px;
+  color: var(--ink);
+  margin: 6px 0 18px;
+}
+.sale-banner {
+  background: var(--card);
+  border: 1px dotted var(--line);
+  padding: 14px 16px;
+  margin: 0 auto 18px;
+  max-width: 500px;
+}
+.sale-banner b {
+  display: block;
+  color: var(--sale);
+  font-size: 19px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sale-banner p {
+  color: var(--mute);
+  font-size: 13px;
+}
+
+/* Блок философии со 2-й страницы бука */
+.about-box {
+  background: var(--card);
+  border: 1px dotted var(--line);
+  padding: 20px 18px;
+  margin: 16px auto 24px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.about-box h1 {
+  font: 700 20px/1.3 var(--serif);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.about-box .sub {
+  text-align: center;
+  font-size: 14px;
+  color: var(--mute);
+  margin-bottom: 14px;
+}
+.about-box p {
+  text-indent: 18px;
+  margin-bottom: 10px;
+}
+.about-box p:last-child { margin-bottom: 0; }
+
+/* Категории */
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 2px 18px;
+  scrollbar-width: none;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none;
+  border: 1px dotted var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: .15s;
+}
+.chip[aria-pressed=true] {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+/* Сетка карточек (стиль карусели FB/Insta) */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media(min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media(min-width: 960px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+.card {
+  border: 2px dotted var(--line);
+  background: var(--card);
+  padding: 16px 14px 14px;
+  display: flex;
+  flex-direction: column;
+}
+.card-head {
+  font-size: 11px;
+  color: var(--mute);
+  text-align: center;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.card h2 {
+  font: 700 18px/1.25 var(--serif);
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  min-height: 2.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ph { position: relative; }
+.track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  gap: 6px;
+}
+.track::-webkit-scrollbar { display: none; }
+.slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  aspect-ratio: 3/4;
+  background: #e9e3d2;
+  position: relative;
+  overflow: hidden;
+}
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.slide.miss::after {
+  content: "Заглушка фото:\A" attr(data-n);
+  white-space: pre-wrap;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 14px;
+  color: var(--mute);
+  font: 12px/1.5 monospace;
+  border: 1px dashed var(--line);
+}
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--sale);
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 3px 10px;
+  z-index: 2;
+  letter-spacing: 0.04em;
+}
+.dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 10px;
+  font-size: 11px;
+  color: var(--mute);
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+  opacity: .45;
+}
+.dot.on { opacity: 1; background: var(--ink); }
+
+.info { flex: 1; }
+.info p { font-size: 13px; margin-bottom: 3px; }
+.info b { font-weight: 700; }
+
+.price {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dotted var(--line);
+  text-align: right;
+}
+.price div { font-size: 13px; margin-bottom: 2px; }
+.price s { color: var(--mute); margin-right: 8px; }
+.price strong { color: var(--sale); font-size: 17px; }
+
+.btn {
+  margin-top: 12px;
+  width: 100%;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  font: 700 13px var(--serif);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 12px;
+  cursor: pointer;
+}
+.btn.alt { background: none; color: var(--ink); }
+.btn:focus-visible, .chip:focus-visible, .opt:focus-visible {
+  outline: 2px solid var(--sale);
+  outline-offset: 2px;
+}
+
+/* Нижняя плашка корзины и шторка заказа */
+.bar {
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
+  max-width: 700px;
+  margin: 0 auto;
+  display: none;
+}
+.bar.on { display: block; }
+.bar .btn {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0,0,0,.18), 0 0 0 3px var(--bg);
+}
+.ov {
+  position: fixed;
+  inset: 0;
+  background: rgba(40,38,34,.55);
+  z-index: 30;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.ov.on { display: flex; }
+.sheet {
+  background: var(--bg);
+  width: 100%;
+  max-width: 640px;
+  max-height: 92vh;
+  overflow: auto;
+  padding: 18px 16px calc(22px + env(safe-area-inset-bottom, 0px));
+  border-top: 2px dotted var(--line);
+}
+.sheet h3 {
+  font: 700 18px var(--serif);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.sheet .x {
+  float: right;
+  background: none;
+  border: 0;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+}
+.lbl { margin: 14px 0 6px; font-weight: 700; font-size: 13px; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt {
+  border: 1px dotted var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 13px;
+  cursor: pointer;
+  min-width: 44px;
+}
+.opt[aria-pressed=true] {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+.opt:disabled {
+  opacity: .35;
+  text-decoration: line-through;
+  cursor: default;
+}
+.var { border-top: 2px dotted var(--line); margin-top: 16px; padding-top: 4px; }
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dotted var(--line);
+  font-size: 13px;
+}
+.qty { display: flex; align-items: center; gap: 8px; flex: none; }
+.qty button {
+  width: 28px;
+  height: 28px;
+  border: 1px dotted var(--line);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 16px;
+}
+.tot {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 16px;
+  margin: 14px 0 4px;
+}
+input, textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 14px;
+  padding: 10px;
+  border: 1px dotted var(--line);
+  background: var(--card);
+  color: var(--ink);
+  margin-top: 8px;
+}
+.note { color: var(--mute); font-size: 12px; margin-top: 10px; text-align: center; line-height: 1.45; }
+.toast {
+  position: fixed;
+  left: 50%;
+  top: calc(14px + env(safe-area-inset-top, 0px));
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 9px 18px;
+  font-size: 13px;
+  z-index: 40;
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="cap">comfort &amp; style</div>
+
+  <!-- НАЧАЛЬНЫЙ ЭКРАН (Как на обложке и 2-м слайде) -->
+  <header class="hero">
+    <div class="brand-wrap">
+      <svg class="arc-svg" viewBox="0 0 200 110">
+        <path id="textArc" d="M 22,94 A 74,74 0 1,1 172,78" fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="1.5 6.5" stroke-linecap="round"/>
+        <text font-family="Merriweather, Georgia, serif" font-size="13.5" fill="var(--ink)">
+          <textPath href="#textArc" startOffset="40%">comfy &amp; style</textPath>
+        </text>
+      </svg>
+      <div class="brand-title">
+        LeMoon <span class="frac"><b>8</b><i></i><b>9</b></span>
+      </div>
+    </div>
+    <p class="tagline">Создай свой уникальный стиль с нами</p>
+
+    <div class="sale-banner">
+      <b>Распродажа −70%</b>
+      <p>Ликвидация коллекций — все изделия в наличии со скидкой 70%. Листайте карточки и выбирайте свои модели.</p>
+    </div>
+
+    <div class="about-box">
+      <h1>LeMoon 8/9:</h1>
+      <div class="sub">бренд одежды с душой!</div>
+      <p>Добро пожаловать в мир <b>LeMoon 8/9</b> — международный бренд одежды с определенной философией осознанности.</p>
+      <p>Все наши изделия мы создаем с любовью не только к моде и комфорту, но и к самой жизни.</p>
+      <p>Мы верим, что одежда должна быть не только красивой, но и функциональной, комфортной и вдохновляющей.</p>
+      <p>Мы отбираем только лучшие ткани и фурнитуру, чтобы гарантировать высочайшее качество и долговечность каждого изделия.</p>
+      <p><b>LeMoon 8/9</b> — это состояние, которым мы наполняем одежду, используя символы, цифры и аффирмации.</p>
+    </div>
+  </header>
+
+  <!-- ФИЛЬТРЫ И КАТАЛОГ -->
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="cap foot">LeMoon 8/9 · comfort &amp; style</div>
+</div>
+
+<div class="bar" id="bar"><button class="btn" id="barBtn"><span id="barN"></span><span id="barS"></span></button></div>
+<div class="ov" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ НАСТРОЙКИ ============ */
+const ORDER_TO = 'lemoon8_9';      // ник в Telegram без @, куда уходят заказы
+const DISCOUNT = 0.70;             // скидка 70% (считается автоматически от цен бука)
+const IMG_DIR  = 'images/';        // папка с нарезанными картинками
+const IMG_EXT  = '.jpg';
+
+/* Наличие: если пусто — доступны все размеры из бука.
+   При желании можно закинуть файл stock.csv рядом с index.html (формат строк: id;размеры через запятую) */
+const STOCK = {};
+
+/* Каталог строго по страницам бука */
+const DATA = `
+pl|zodiac|Платье Zodiac|95% премиум армани шелк, 5% эластан|белый|XS-XXL|9900
+pl|pink_moon|Платье Pink Moon|95% премиум армани шелк, 5% эластан|розовый|XS-L|8888
+pl|freedom|Платье Freedom|95% премиум армани шелк, 5% эластан|черный|XS-L|7500
+pl|moon_dreams|Платье Moon Dreams|65% вискоза, 35% лен|розовый|XS-M|8500
+pl|red_passion|Платье Red Passion|97% премиальный полиэстер, 3% спандекс|красный|XS-M|9999
+pl|red_passion_snake|Платье Red Passion Snake|97% премиальный полиэстер, 3% спандекс|красный|XS-M|9999
+pl|amarylis|Платье Amarylis|100% полиэстер|красный|S-XXL|10888
+pl|full_moon|Платье Full Moon|100% бамбук|черный|XS-L|9900
+pl|venera|Платье Venera|50% вискоза, 25% тенцель, 25% нейлон|бежевый,черный,зеленый|S-L|6800
+pl|crystal|Платье Crystal|пайеточная ткань|розовый|XS-M|7500
+pl|snake_dress|Платье Snake|65% полиэстер, 30% вискоза, 5% эластан|коричневый|XS-M|9999
+pl|harmony|Платье Harmony|65% полиэстер, 30% вискоза, 5% эластан|бежевый|S-L|9999
+ko|golden_hour|Гарнитур Golden Hour|63% полиэстер, 22% хлопок, 9% вискоза, 4% полиамид|розовый,коричневый|ONESIZE/XS-L|пиджак:15500,юбка:7500
+ko|suit_1111_pants|Гарнитур 11:11 (пиджак + штаны)|65% полиэстер, 33% район, 2% спандекс|серый,персиковый,белый|XS-XL|пиджак:16500,штаны:8500
+ko|suit_1111_shorts|Гарнитур 11:11 (пиджак + шорты)|65% полиэстер, 33% район, 2% спандекс|серый,персиковый,белый|XS-XL|пиджак:16500,шорты:6500
+ko|suit_snake|Гарнитур Snake|65% полиэстер, 33% район, 2% спандекс|серый|ONESIZE|пиджак:15500,штаны:7500
+ko|saturn_emb|Костюм Saturn с вышивкой|90% хлопок, 10% полиэстер|синий,песочный,граффит|XS-XXL/S-L|худи:8888,штаны:5888
+ko|saturn|Костюм Saturn без вышивки|90% хлопок, 10% полиэстер|синий,песочный|XS-XXL/S-L|худи:7888,штаны:5888
+ko|i_am_enough|Костюм I AM ENOUGH|95% хлопок, 5% эластан|бежевый,черный,красный|XS-XXL|худи:7500,штаны:5500
+ko|feel_energy|Костюм Feel Your Energy|95% премиум армани шелк, 5% эластан|бежевый,черный,красный|XS-XXL|худи:7500,штаны:5500
+ve|jacket_89|Жакет 8/9|65% полиэстер, 30% вискоза, 5% эластан|бежевый|ONESIZE|15500
+ve|dolores|Рубашка Dolores|100% вискоза|бело-черный|XS-L|3900
+ve|goldie|Блузка Goldie|100% вискоза|золотистый|XS-L|5888
+ve|murashki|Худи Murashki|95% хлопок, 5% эластан|розовый|ONESIZE|7500
+ve|dusha_teplo_lubov|Худи Душа/Тепло/Любовь|95% хлопок, 5% эластан|серый|ONESIZE|7500
+ve|tee_good_things|Футболка Good Things|95% хлопок, 5% эластан|серый|ONESIZE|2500
+ve|tee_text|Футболки с надписями|95% хлопок, 5% эластан|молочный|S-L|3990
+ve|tee_snake|Футболка Snake|95% хлопок, 5% эластан|белый,черный|XS-M|4990
+ve|keep_going|Футболка Keep Going|95% хлопок, 5% эластан|молочный,розовый|S-L|3990
+ve|wheel_of_fortune|Футболка Wheel of Fortune|95% хлопок, 5% эластан|розовый,салатовый|ONESIZE|5555
+ve|self_love|Лонгслив Self Love|95% хлопок, 5% эластан|коралловый,белый,черный|XS-L|2500
+ve|full_power|Футболка Full Power|95% хлопок, 5% эластан|серый,синий,голубой|ONESIZE|5500
+ve|moon_walk|Рубашка Moon Walk|100% вискоза|черный,белый,бежевый,голубой|XS-XXL|8800
+ni|skirt_89|Юбка 8/9|65% полиэстер, 30% вискоза, 5% эластан|бежевый|S-L|7500
+ni|casual_moon|Штаны Casual Moon|95% хлопок, 5% эластан|бежевый|S-L|5700
+ni|spiral|Юбка Spiral|95% хлопок, 5% эластан|молочный,розовый|S-L|4500
+ni|shorts|Шорты|95% хлопок, 5% эластан|серый,голубой|M-XL|3990
+ni|nautica|Штаны Nautica|95% хлопок, 5% эластан|синий|S-XXL|8500
+do|moon_love|Пижама Moon Love|95% премиум армани шелк, 5% эластан|ecru (молочный),синий|XS-XXL|7500
+do|sorochka_love|Сорочка Love|95% премиум армани шелк, 5% эластан|ecru (молочный),синий,малиновый|M-XXL|4500
+do|kimono_love|Кимоно Love|95% премиум армани шелк, 5% эластан|ecru (молочный),синий,малиновый|M-XXL|5990
+do|fairy|Кимоно и штаны Fairy|95% премиум армани шелк, 5% эластан|ecru (молочный),синий|XS-XXL|кимоно:5900,штаны:4990
+ak|scarf_snake|Платок Snake|95% премиум армани шелк, 5% эластан|зеленый,коричневый|70x70 см|3333
+ak|scarf_moonlight|Платок Moonlight|95% премиум армани шелк, 5% эластан|розовый|70x70 см|3333
+ak|socks|Носки с надписями|80% хлопок, 15% полиамид, 5% эластан|белый|ONESIZE|999
+`;
+
+const CATS = {
+  all: 'Все модели',
+  pl: 'Платья',
+  ko: 'Костюмы и гарнитуры',
+  ve: 'Верх',
+  ni: 'Низ',
+  do: 'Дом и сон',
+  ak: 'Аксессуары'
+};
+
+/* ============ ЛОГИКА ============ */
+const SZ = ['XS','S','M','L','XL','XXL'];
+const expand = s => {
+  if (s.includes('-')) {
+    const [a,b] = s.split('-');
+    if (SZ.includes(a) && SZ.includes(b)) return SZ.slice(SZ.indexOf(a), SZ.indexOf(b)+1);
+  }
+  return [s];
+};
+
+const P = DATA.trim().split('\n').map(l => {
+  const [cat,id,name,comp,colors,sz,pr] = l.split('|');
+  const szs = sz.split('/');
+  const vs = pr.includes(':')
+    ? pr.split(',').map((x,i) => { const [n,p] = x.split(':'); return {n, p:+p, s:expand(szs[i]||szs[0])}; })
+    : [{n:'', p:+pr, s:expand(szs[0])}];
+  return {cat, id, name, comp, colors: colors.split(','), vs};
+});
+
+const sale = p => Math.round(p * (1 - DISCOUNT));
+const rub = n => n.toLocaleString('ru-RU').replace(/\u00a0/g,' ') + ' ₽';
+const avail = (p,vi) => {
+  const st = STOCK[p.id+':'+vi] || STOCK[p.id];
+  return st ? p.vs[vi].s.filter(s => st.includes(s)) : p.vs[vi].s;
+};
+const $ = id => document.getElementById(id);
+let cart = [], cat = 'all', cur = null, sel = {};
+
+function render() {
+  $('chips').innerHTML = Object.entries(CATS)
+    .map(([k,v]) => `<button class="chip" data-cat="${k}" aria-pressed="${k===cat}">${v}</button>`) .join('');  $('grid').innerHTML = P.filter(p => cat==='all' \vert{}\vert{} p.cat===cat).map(p => { const one = p.vs.length === 1; const prices = p.vs.map(v => `<div>${one ? '' : v.n + ' — '}<s>${rub(v.p)}</s><strong>${rub(sale(v.p))}</strong></div>`).join('');
+    const sizes = p.vs.map(v => `${one ? '' : v.n + ': '}${v.s.length>1 ? v.s[0]+'–'+v.s[v.s.length-1] : v.s[0]}`).join(', ');
+    const sl = n => `<div class="slide" data-n="${IMG_DIR}${p.id}_${n}${IMG_EXT}"><img src="${IMG_DIR}${p.id}_${n}${IMG_EXT}" alt="${p.name}" loading="lazy" onerror="this.parentNode.classList.add('miss');this.remove()"></div>`;
+    return `<article class="card">
+      <div class="card-head">LeMoon 8/9</div>
+      <h2>${p.name}</h2>
+      <div class="ph">
+        <span class="badge">−70%</span>
+        <div class="track" onscroll="const d=this.parentNode.nextElementSibling.querySelectorAll('.dot');const i=Math.round(this.scrollLeft/this.clientWidth);d.forEach((x,k)=>x.classList.toggle('on',k===i))">${sl(1)}${sl(2)}</div>
+      </div>
+      <div class="dots"><span class="dot on"></span><span class="dot"></span><span>· листайте фото →</span></div>
+      <div class="info">
+        <p><b>Состав:</b> ${p.comp}</p>
+        <p><b>Цвет:</b> ${p.colors.join(', ')}</p>
+        <p><b>Размеры:</b> ${sizes}</p>
+      </div>
+      <div class="price">${prices}</div>
+      <button class="btn" data-open="${p.id}">Выбрать и заказать</button>
+    </article>`;
+  }).join('');
+}
+
+function openSheet(id) {
+  cur = P.find(p => p.id === id);
+  sel = {color: cur.colors[0], size: {}};
+  drawSheet();
+  $('ov').classList.add('on');
+}
+
+function drawSheet() {
+  const p = cur;
+  const colors = p.colors.length > 1
+    ? `<div class="lbl">Цвет</div><div class="opts">${p.colors.map(c => `<button class="opt" data-color="${c}" aria-pressed="${sel.color===c}">${c}</button>`).join('')}</div>`
+    : '';
+  const vars = p.vs.map((v,i) => {
+    const a = avail(p,i);
+    return `<div class="${p.vs.length>1 ? 'var' : ''}">
+      ${p.vs.length>1
+        ? `<div class="lbl">${v.n[0].toUpperCase()+v.n.slice(1)} — <s style="color:var(--mute)">${rub(v.p)}</s> <span style="color:var(--sale)">${rub(sale(v.p))}</span></div>`
+        : '<div class="lbl">Размер</div>'}
+      <div class="opts">${v.s.map(s => `<button class="opt" data-vi="${i}" data-size="${s}" aria-pressed="${sel.size[i]===s}" ${a.includes(s)?'':'disabled'}>${s}</button>`).join('')}</div>
+      <button class="btn alt" data-add="${i}" ${a.length?'':'disabled'}>${a.length ? 'Добавить в корзину' : 'Нет в наличии'}</button>
+    </div>`;
+  }).join('');
+  $('sheet').innerHTML = `<button class="x" data-close aria-label="Закрыть">×</button><h3>${p.name}</h3>${colors}${vars}`; }  function lines() { return cart.map(c => { const p = P.find(x => x.id === c.id), v = p.vs[c.vi]; return { c, p, v, price: sale(v.p), text: `${p.name}${v.n ? ' ('+v.n+')' : ''}${p.colors.length>1 ? ', цвет: '+c.color : ''}${v.s.length>1 ? ', размер: '+c.size : ''}` }; }); } const total = () => lines().reduce((s,l) => s + l.price * l.c.q, 0);  function bar() { const n = cart.reduce((s,c) => s + c.q, 0); $('bar').classList.toggle('on', n > 0); $('barN').textContent = `Корзина · ${n} шт.`;
+  $('barS').textContent = rub(total());
+}
+
+function toast(t) {
+  const e = $('toast');
+  e.textContent = t;
+  e.style.display = 'block';
+  setTimeout(() => e.style.display = 'none', 1800);
+}
+
+function drawCart() {
+  const ls = lines();
+  $('sheet').innerHTML = `<button class="x" data-close aria-label="Закрыть">×</button><h3>Ваш заказ</h3>` + (ls.length ?
+    ls.map((l,i) => `<div class="row"><span><b>${l.text}</b><br><small><s>${rub(l.v.p)}</s> →${rub(l.price)}</small></span><span class="qty"><button data-q="${i}" data-d="-1" aria-label="Меньше">−</button>${l.c.q}<button data-q="${i}" data-d="1" aria-label="Больше">+</button></span></div>`).join('') +
+    `<div class="tot"><span>Итого со скидкой −70%:</span><span>${rub(total())}</span></div>
+    <input id="nm" placeholder="Ваше имя и контакт (телефон / @ник)" autocomplete="name">
+    <textarea id="cm" rows="2" placeholder="Город, адрес доставки или комментарий к заказу"></textarea>
+    <button class="btn" data-send>Отправить заказ в @${ORDER_TO}</button>
+    <button class="btn alt" data-copy>Скопировать текст заказа</button>
+    <p class="note">При нажатии откроется личный диалог с <b>@${ORDER_TO}</b> в Telegram с готовым списком ваших покупок. Если вы открыли сайт внутри Instagram и переход блокируется — нажмите «Скопировать текст заказа».</p>`
+    : '<p class="note" style="margin:24px 0">В корзине пока пусто</p>');
+}
+
+function orderText() {
+  const ls = lines();
+  const nm = ($('nm')||{}).value || '', cm = ($('cm')||{}).value || '';
+  return `Здравствуйте! Хочу оформить заказ LeMoon 8/9 (распродажа −70%):\n\n` +
+    ls.map((l,i) => `${i+1}.${l.text} — ${l.c.q} шт. × ${rub(l.price)} (вместо ${rub(l.v.p)})`).join('\n') + `\n\nИтого к оплате: ${rub(total())}` +
+    (nm ? `\nКонтакт: ${nm}` : '') + (cm ? `\nДоставка / комментарий: ${cm}` : '');
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('button,#ov');
+  if (!t) return;
+  const d = t.dataset;
+  if (t.id === 'ov' && e.target === t) { t.classList.remove('on'); return; }
+  if (d.cat) { cat = d.cat; render(); }
+  else if (d.open) openSheet(d.open);
+  else if (d.close !== undefined) $('ov').classList.remove('on');
+  else if (d.color) { sel.color = d.color; drawSheet(); }
+  else if (d.size) { sel.size[d.vi] = d.size; drawSheet(); }
+  else if (d.add !== undefined) {
+    const vi = +d.add;
+    if (!sel.size[vi] && cur.vs[vi].s.length > 1) { toast('Пожалуйста, выберите размер'); return; }
+    const size = sel.size[vi] || cur.vs[vi].s[0];
+    const f = cart.find(c => c.id===cur.id && c.vi===vi && c.size===size && c.color===sel.color);
+    f ? f.q++ : cart.push({id: cur.id, vi, size, color: sel.color, q: 1});
+    bar();
+    toast('Добавлено в корзину');
+  }
+  else if (t.id === 'barBtn') { drawCart(); $('ov').classList.add('on'); }
+  else if (d.q !== undefined) {
+    const c = cart[+d.q];
+    c.q += +d.d;
+    if (c.q < 1) cart.splice(+d.q, 1);
+    bar();
+    drawCart();
+  }
+  else if (d.send !== undefined) {
+    const txt = orderText(), url = `https://t.me/${ORDER_TO}?text=${encodeURIComponent(txt)}`;
+    const tg = window.Telegram && Telegram.WebApp && Telegram.WebApp.initData;
+    if (tg && Telegram.WebApp.openTelegramLink) Telegram.WebApp.openTelegramLink(url);
+    else window.open(url, '_blank') || (location.href = url);
+  }
+  else if (d.copy !== undefined) {
+    const txt = orderText();
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(
+      () => toast('Текст заказа скопирован!'),
+      () => {
+        const a = document.createElement('textarea');
+        a.value = txt; document.body.appendChild(a); a.select();
+        try { document.execCommand('copy'); toast('Текст заказа скопирован!'); } catch(_) { toast('Не удалось скопировать'); }
+        a.remove();
+      }
+    );
+  }
+});
+
+/* Опциональная автоподгрузка остатков из stock.csv (без SQL и бэкенда) */
+fetch('stock.csv').then(r => r.ok ? r.text() : '').then(csv => {
+  if (!csv) return;
+  csv.trim().split(/\r?\n/).forEach(row => {
+    const [key, sizes] = row.split(/[;,]/);
+    if (key && sizes) STOCK[key.trim()] = sizes.trim().split(/\s+/);
+  });
+  render();
+}).catch(() => {});
+
+try { Telegram.WebApp.ready(); Telegram.WebApp.expand(); } catch(_) {}
+render();
+</script>
+</body>
+</html>
