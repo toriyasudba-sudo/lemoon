@@ -167,9 +167,10 @@ body {
   padding: 8px 2px 16px;
   scrollbar-width: none;
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px); /* учитывает вырез телефона */
   background: var(--bg);
   z-index: 10;
+  box-shadow: 0 4px 12px rgba(59, 59, 57, 0.06); /* легкая тень, чтобы кнопки красиво плыли */
 }
 .chips::-webkit-scrollbar { display: none; }
 .chip {
